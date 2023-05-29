@@ -1,5 +1,5 @@
 import numpy as np
-from datareader import DataReader
+from .datareader import DataReader
 
 def get_intersection(dataset_a: DataReader, dataset_b: DataReader) -> list:
     a_hkl = set([tuple(item) for item in dataset_a.hkl()])

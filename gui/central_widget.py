@@ -8,25 +8,29 @@ class CentralWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
-        self.hello = ["Hallo Welt", "Hei maailma", "Hola Mundo", "Привет мир"]
-
-        self.button = QtWidgets.QPushButton("Click me!")
+        self.setLayout(QtWidgets.QHBoxLayout(self))
 
         self.toolbar = QtWidgets.QToolBar("Main Toolbar")
         
-
-        self.layout = QtWidgets.QVBoxLayout(self)
+        display_window = QtWidgets.QFrame(self)
+        display_window_layout = QtWidgets.QVBoxLayout(self)
+        display_window.setLayout(display_window_layout)
         
         
         self.graph = pg.ScatterPlotItem()
         self.plot = pg.plot()
         self.plot.setBackground("w")
         self.plot.addItem(self.graph)
-        self.layout.addWidget(self.plot)
+        display_window_layout.addWidget(self.plot)
         self.console = QtWidgets.QLineEdit(alignment=QtCore.Qt.AlignLeft,readOnly=True)
 
-        self.layout.addWidget(self.console)
-        self.layout.addWidget(self.button)
+        display_window_layout.addWidget(self.console)
+        self.button = QtWidgets.QPushButton("Calculate")
+        display_window_layout.addWidget(self.button)
+
+        self.file_list = QtWidgets.QListWidget()
+        self.layout().addWidget(self.file_list)
+        self.layout().addWidget(display_window)
 
         self.button.clicked.connect(self.magic)
 

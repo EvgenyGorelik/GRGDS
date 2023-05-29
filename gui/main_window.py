@@ -5,7 +5,7 @@ from gui.menu_bar import GuiMenuBar
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        menubar = GuiMenuBar(self)
-        self.setMenuBar(menubar)
         widget = CentralWidget()
         self.setCentralWidget(widget)
+        menubar = GuiMenuBar(self, widget)
+        self.setMenuBar(menubar)

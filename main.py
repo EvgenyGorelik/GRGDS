@@ -5,8 +5,8 @@ from scipy import optimize as optim
 from argparse import ArgumentParser
 from glob import glob
 from os import path
-from datareader import DataReader
-from utils import (
+from func.datareader import DataReader
+from func.utils import (
     get_intersection,
     find_index_by_hkl
 )

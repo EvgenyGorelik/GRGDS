@@ -1,9 +1,13 @@
-from PySide6.QtWidgets import QMenuBar
+from PySide6.QtWidgets import QMenuBar, QFileDialog
 from PySide6.QtGui import QAction
 
+import os
+
 class GuiMenuBar(QMenuBar):
-    def __init__(self, parent):
+    def __init__(self, parent, main_widget):
         super(GuiMenuBar, self).__init__(parent)
+
+        self.main_widget = main_widget
         fileMenu = self.addMenu("&File")
         editMenu = self.addMenu("&Edit")
         helpMenu = self.addMenu("&Help")
@@ -36,8 +40,19 @@ class GuiMenuBar(QMenuBar):
         self.newAction.triggered.connect(self.newAction_clicked)
         self.exitAction.triggered.connect(self.exitAction_clicked)
 
+        self.selected_files = None
+
     def newAction_clicked(self):
-        print("clicked")
+        dialog = QFileDialog(filter="Reflection Data File (*.hkl)")
+        dialog.setFileMode(QFileDialog.ExistingFiles)
+        dialog.exec()
+        self.selected_files = dialog.selectedFiles()
+        self.main_widget.file_list.clear()
+        for f in self.get_file_list():
+            self.main_widget.file_list.addItem(f)
+
+    def get_file_list(self):
+        return [os.path.basename(p) for p in self.selected_files]
 
     
     def exitAction_clicked(self):
