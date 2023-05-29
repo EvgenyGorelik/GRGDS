@@ -53,7 +53,7 @@ def main(args):
             def func(params):
                 return np.sum((y_hat - (params[0] + params[1]*X))**2)
             
-            result = optim.minimize(method="BFGS", fun=func, x0=np.zeros(2))
+            result = optim.minimize(method="BFGS", fun=func, x0=np.ones(2))
             print(f"Fitting function:\n I_{dataset_b} = {result.x[0]} + {result.x[1]} * I_{dataset_a}")
 
             lin_grid = np.linspace(0,np.max(X),100)
