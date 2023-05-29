@@ -8,7 +8,7 @@ Required [Python](https://www.python.org) version >= 3.8
 Install requirements using
 
 ```
-pip -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Usage
