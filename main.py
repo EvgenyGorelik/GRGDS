@@ -66,10 +66,6 @@ def main(args):
             plt.waitforbuttonpress(2)
 
         
-            
-
-            
-
 if __name__=="__main__":
     parser = ArgumentParser()
     parser.add_argument("data", help="File path to directory containing .hkl files", default="data")

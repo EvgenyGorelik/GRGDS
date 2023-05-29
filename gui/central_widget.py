@@ -1,10 +1,10 @@
-import sys
-import numpy as np
-import random
+
 from PySide6 import QtCore, QtWidgets, QtGui
 import pyqtgraph as pg
+import numpy as np
 
-class MyWidget(QtWidgets.QWidget):
+
+class CentralWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
@@ -36,11 +36,3 @@ class MyWidget(QtWidgets.QWidget):
         self.graph.addPoints(np.random.rand(100),np.random.rand(100))
         self.console.setText(self.console.text()+"\nScatter Plot with 100 points")
         
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-
-    widget = MyWidget()
-    widget.resize(800, 600)
-    widget.show()
-
-    sys.exit(app.exec())
