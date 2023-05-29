@@ -21,6 +21,17 @@ python main.py data
 
 with `data` being the directory, where the `.hkl` files are stored.
 
+To cap the number of samples used for the calculation of the coefficients use the `--max_samples` argument. To store the images of intensities plotted against each other set the storage path using `--save_figures`.
+
+A call that caps the number of smaples to 1000 random picked hkl values and stores the resulting images in `ìmages` looks like this:
+
+```
+python main.py data --max_samples 1000 --save_figures images
+```
+
+The results are stored in a created `results` folder.
+
+
 ## Background
 
 The program calculates intersection set of hkl values in two files $a$, $b$ and fits the values $p_1$ and $p_2$ of the function
