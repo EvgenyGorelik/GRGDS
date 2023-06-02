@@ -19,7 +19,7 @@ class DataReader():
         self._hkl = np_data[:,:3].astype(np.int16)
         self._intensities = np_data[:,3]
         if np_data.shape[1] > 4:
-            self.error = np_data[:,3]
+            self.error = np_data[:,4]
     
     def __str__(self):
         return self._name
@@ -36,7 +36,17 @@ class DataReader():
         with open(self.file) as f:
             lines = f.readlines()
             for line in lines:
-                data.append([float(item) for item in re.split("\s+", line) if item != ''])
+                if line != "":
+                    h = float(line[0:4])
+                    k = float(line[4:8])
+                    l = float(line[8:12])
+                    intensity = float(line[12:20])
+                    error = 0
+                    try: 
+                        error = float(line[20:28])
+                    except IndexError as e:
+                        pass
+                    data.append([h, k, l, intensity, error])
         return data
 
 
