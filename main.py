@@ -44,6 +44,9 @@ def main(args):
             if args.max_samples:
                 intersection = subsample_data(intersection, args.max_samples)
             print(f"Using {len(intersection)} intesecting hkl values")
+            if len(intersection) == 0:
+                print(f"No intersecting hkl values for {dataset_x} and {dataset_y}")
+                continue
             
             intersection_index_a = list()
             intersection_index_b = list()
@@ -71,7 +74,8 @@ def main(args):
                 "dataset_y": str(dataset_y),
                 "scaling_factor": result.x[1],
                 "offset": result.x[0],
-                "variance": result.fun
+                "variance": result.fun,
+                "correspondences": len(intersection)
             })
 
             lin_grid = np.linspace(0,np.max(X),100)
@@ -83,6 +87,7 @@ def main(args):
                 plt.xlabel(f"Intensities {dataset_x}")
                 plt.ylabel(f"Intensities {dataset_y}")
                 plt.savefig(path.join(args.save_figures,f"{dataset_x}_{dataset_y}.png"))
+                plt.close()
                 plt.figure()
                 plt.title(f"Fitted Line")
                 plt.scatter(X, y_hat)
@@ -90,6 +95,7 @@ def main(args):
                 plt.xlabel(f"Intensities {dataset_x}")
                 plt.ylabel(f"Intensities {dataset_y}")
                 plt.savefig(path.join(args.save_figures,f"{dataset_x}_{dataset_y}_fitted.png"))
+                plt.close()
     json.dump(results, open(path.join("results",f"result_{int(time.time())}.json"), "w+"),indent=4,cls=NpEncoder)
 
 if __name__=="__main__":

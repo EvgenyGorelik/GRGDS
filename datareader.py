@@ -37,9 +37,9 @@ class DataReader():
             lines = f.readlines()
             for line in lines:
                 if line != "":
-                    h = float(line[0:4])
-                    k = float(line[4:8])
-                    l = float(line[8:12])
+                    h = int(line[0:4])
+                    k = int(line[4:8])
+                    l = int(line[8:12])
                     intensity = float(line[12:20])
                     error = 0
                     try: 
