@@ -48,6 +48,7 @@ class CentralWidget(QtWidgets.QWidget):
 
         
         self.result_list = QtWidgets.QListWidget()
+        self.image_data = None
         self.results = None
 
         self.layout().addWidget(self.file_list)
@@ -62,10 +63,9 @@ class CentralWidget(QtWidgets.QWidget):
 
 
     def itemActivated_event(self, item):
-        print(item)
-        height, width, channel = self.results[item]['image'].shape
+        height, width, channel = self.image_data[item].shape
         bytesPerLine = 3 * width
-        qImg = QtGui.QImage(self.results[item]['image'].data, width, height, bytesPerLine, QtGui.QImage.Format_RGB888)
+        qImg = QtGui.QImage(self.image_data[item].data, width, height, bytesPerLine, QtGui.QImage.Format_RGB888)
         self.plot.setPixmap(QtGui.QPixmap.fromImage(qImg))
         
 
@@ -77,6 +77,7 @@ class CentralWidget(QtWidgets.QWidget):
         self.write_message(f"Loaded {len(file_loaders)} files")
 
         self.results = list()
+        self.image_data = list()
         self.result_list.clear()
         for i in range(len(file_loaders) - 1):
             for j in range(i + 1, len(file_loaders)):
@@ -97,7 +98,6 @@ class CentralWidget(QtWidgets.QWidget):
                 toc = time.time()
                 self.write_message(f"elapsed time: {toc-tic} s")
                 self.write_message(f"Fitting function:\n I_{dataset_y} = {result.x[0]} + {result.x[1]} * I_{dataset_x}")
-                plotter = FitPlotter(np.stack([extracted_data["y_values"], extracted_data["x_values"]],axis=1), fitted_function=model.func, weights=extracted_data["weights"])
                 self.results.append({
                     "dataset_x": str(dataset_x),
                     "dataset_y": str(dataset_y),
@@ -105,6 +105,6 @@ class CentralWidget(QtWidgets.QWidget):
                     "offset": result.x[0],
                     "variance": result.fun,
                     "correspondences": len(extracted_data['intersection_total']),
-                    "image": plotter.getfig() 
                 })
+                self.image_data.append(FitPlotter(np.stack([extracted_data["x_values"], extracted_data["y_values"]],axis=1), fitted_function=model.func, weights=extracted_data["weights"]).getfig())
                 self.result_list.addItem(f"{self.results[-1]['dataset_x']}_{self.results[-1]['dataset_y']}")
