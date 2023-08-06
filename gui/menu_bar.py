@@ -47,6 +47,7 @@ class GuiMenuBar(QMenuBar):
         dialog.setFileMode(QFileDialog.ExistingFiles)
         dialog.exec()
         self.selected_files = dialog.selectedFiles()
+        self.main_widget.file_list_data = self.selected_files
         self.main_widget.file_list.clear()
         for f in self.get_file_list():
             self.main_widget.file_list.addItem(f)

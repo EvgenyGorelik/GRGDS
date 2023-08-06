@@ -5,9 +5,10 @@ from scipy import optimize as optim
 from argparse import ArgumentParser
 from glob import glob
 from os import path, makedirs
-from datareader import DataReader
-from utils import (
+from func.datareader import DataReader
+from func.utils import (
     get_intersection,
+    extract_data,
     find_index_by_hkl,
     subsample_data,
     NpEncoder
@@ -46,30 +47,14 @@ def main(args):
             dataset_x = file_loaders[i]
             dataset_y = file_loaders[j]
             print(f"Fitting intensities of {dataset_x} to intensities of {dataset_y}")
-            intersection = get_intersection(dataset_x, dataset_y)
-            print(f"Got {len(intersection)} intesecting hkl values")
-            if args.max_samples:
-                intersection = subsample_data(intersection, args.max_samples)
-            print(f"Using {len(intersection)} intesecting hkl values")
-            if len(intersection) == 0:
+            extracted_data = extract_data(dataset_x=dataset_x, dataset_y=dataset_y, max_samples=args.max_samples)
+            if extracted_data["x_values"] is None:
                 print(f"No intersecting hkl values for {dataset_x} and {dataset_y}")
-                continue
+            print(f"Got {len(extracted_data['intersection_total'])} intesecting hkl values")
+            print(f"Using {len(extracted_data['intersection_subsampled'])} intesecting hkl values")
             
-            intersection_index_a = list()
-            intersection_index_b = list()
-            for hkl_tuple in intersection:
-                intersection_index_a.append(find_index_by_hkl(hkl_tuple=hkl_tuple, dataset=dataset_x.hkl()))
-                intersection_index_b.append(find_index_by_hkl(hkl_tuple=hkl_tuple, dataset=dataset_y.hkl()))
-            intersection_index_a = np.array(intersection_index_a)
-            intersection_index_b = np.array(intersection_index_b)
 
-            X = dataset_x.intensities()[intersection_index_a] 
-            y_hat = dataset_y.intensities()[intersection_index_b]
-            weights = np.ones(len(intersection_index_a)) \
-                        - dataset_y.errors()[intersection_index_b]/np.max(dataset_y.errors())\
-                        * dataset_x.errors()[intersection_index_a]/np.max(dataset_x.errors())
-
-            model = LinearRegressionModel(target_values=y_hat, input_values=X, weights=weights)
+            model = LinearRegressionModel(target_values=extracted_data["y_values"], input_values=extracted_data["x_values"], weights=extracted_data["weights"])
 
             
             tic = time.time()
@@ -83,19 +68,19 @@ def main(args):
                 "scaling_factor": result.x[1],
                 "offset": result.x[0],
                 "variance": result.fun,
-                "correspondences": len(intersection)
+                "correspondences": len(extracted_data['intersection_total'])
             })
 
             if args.save_figures:
                 plt.figure()
                 plt.title(f"Plotted intensities")
-                plt.scatter(X, y_hat)
+                plt.scatter(extracted_data["x_values"], extracted_data["y_values"])
                 plt.xlabel(f"Intensities {dataset_x}")
                 plt.ylabel(f"Intensities {dataset_y}")
                 plt.savefig(path.join(args.save_figures,f"{dataset_x}_{dataset_y}.png"))
                 plt.close()
                 
-                fit_plotter = FitPlotter(np.stack([X, y_hat],axis=1), fitted_function=model.func, weights=weights, xlabel=str(dataset_x), ylabel=str(dataset_y))
+                fit_plotter = FitPlotter(np.stack([extracted_data["x_values"], extracted_data["y_values"]],axis=1), fitted_function=model.func, weights=extracted_data["weights"], xlabel=str(dataset_x), ylabel=str(dataset_y))
                 fit_plotter.savefig(path.join(args.save_figures,f"{dataset_x}_{dataset_y}_fitted.png"))
                 #HKLPlotter(dataset_y.hkl()[intersection_index_b]).save_figure(path.join(args.save_figures,f"{dataset_x}_{dataset_y}_hkl_overlap.png"))
                 

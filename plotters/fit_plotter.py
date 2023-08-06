@@ -14,14 +14,26 @@ class FitPlotter():
         self.xlabel = xlabel
         self.ylabel = ylabel
         
-
-    def savefig(self, save_path):
-        plt.figure()
+    def plot(self):
+        fig = plt.figure()
         plt.title(f"Fitted Line")
         plt.scatter(self.data_points[:,0],self.data_points[:,1], alpha=self.weights)
         lin_grid = np.linspace(0, np.max(self.data_points[:, 0]), 100)
         plt.plot(lin_grid, self.fitted_function(lin_grid))
         plt.xlabel(f"Intensities {self.xlabel}")
         plt.ylabel(f"Intensities {self.ylabel}")
-        plt.savefig(save_path)
+        return fig
+
+    def savefig(self, save_path):
+        fig = self.plot()
+        fig.savefig(save_path)
         plt.close()
+
+    def getfig(self):
+        fig = self.plot()
+        canvas = fig.canvas
+        canvas.draw()  # Draw the canvas, cache the renderer
+        image_flat = np.frombuffer(canvas.tostring_rgb(), dtype='uint8')
+        image = image_flat.reshape(*reversed(canvas.get_width_height()), 3)
+        plt.close()
+        return image
