@@ -22,8 +22,7 @@ class CentralWidget(QtWidgets.QWidget):
         self.plot.setBackground("w")
         self.plot.addItem(self.graph)
         display_window_layout.addWidget(self.plot)
-        self.console = QtWidgets.QLineEdit(alignment=QtCore.Qt.AlignLeft,readOnly=True)
-
+        self.console = QtWidgets.QTextEdit(alignment=QtCore.Qt.AlignLeft,readOnly=True)
         display_window_layout.addWidget(self.console)
         self.button = QtWidgets.QPushButton("Calculate")
         display_window_layout.addWidget(self.button)
@@ -37,6 +36,6 @@ class CentralWidget(QtWidgets.QWidget):
     @QtCore.Slot()
     def magic(self):
         self.graph.clear()
-        self.graph.addPoints(np.random.rand(100),np.random.rand(100))
-        self.console.setText(self.console.text()+"\nScatter Plot with 100 points")
+        self.graph.addPoints(np.random.rand(100), np.random.rand(100))
+        self.console.setPlainText("Scatter Plot with 100 points\n"+self.console.toPlainText())
         
